@@ -1,6 +1,6 @@
-import numpy as np
-from utilities import *
+from sklearn.linear_model import LinearRegression
 
+from utilities import *
 
 
 def gen_reg_data(x_mu=10, x_sigma=1, num_samples=100, num_features=3,
@@ -14,4 +14,15 @@ def gen_reg_data(x_mu=10, x_sigma=1, num_samples=100, num_features=3,
 
     return x, y
 
+
+models_n_params = [
+    (LinearRegression,
+     {})
+]
+
+
+
+
 x, y = gen_reg_data(10, 2, 100, 5, sum, 1)
+
+big_loop()

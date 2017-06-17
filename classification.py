@@ -1,7 +1,11 @@
 import numpy as np
 from sklearn import datasets
+from sklearn import linear_model
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.cluster import KMeans
+from sklearn.neighbors import KNeighborsClassifier
 
-
+from utilities import *
 
 
 def gen_classification_data():

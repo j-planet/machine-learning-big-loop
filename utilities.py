@@ -3,8 +3,7 @@ import numpy as np
 nan = float('nan')
 from collections import Counter
 
-from sklearn.model_selection import StratifiedShuffleSplit as sss
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import StratifiedShuffleSplit as sss, ShuffleSplit as ss, GridSearchCV
 
 
 
@@ -40,7 +39,7 @@ def upsample_indices_clf(inds, y):
     return np.concatenate((inds, *extras))
 
 
-def cv_clf(x, y, test_size = 0.2, n_splits = 5):
+def cv_clf(x, y, test_size = 0.2, n_splits = 5, random_state=None):
     """
     an iterator of cross-validation groups with upsampling
     :param x:
@@ -50,9 +49,12 @@ def cv_clf(x, y, test_size = 0.2, n_splits = 5):
     :return:
     """
 
-    for train_inds, valid_inds in sss(n_splits, test_size).split(x, y):
+    for train_inds, valid_inds in sss(n_splits, test_size, random_state=random_state).split(x, y):
         yield (upsample_indices_clf(train_inds, y[train_inds]), valid_inds)
 
+
+def cv_reg(x, test_size = 0.2, n_splits = 5, random_state=None):
+    return ss(n_splits, test_size, random_state=random_state).split(x)
 
 def big_loop(models_n_params, x, y, cv, verbose=False):
     """
@@ -87,7 +89,13 @@ if __name__ == '__main__':
 
     y = np.array([0,1,0,0,0,3,1,1,3])
     x = np.zeros(len(y))
-    for t, v in cv_clf(x, y, test_size=3):
+
+    for t, v in cv_reg(x):
         print('---------')
         print('training inds:', t)
         print('valid inds:', v)
+
+    # for t, v in cv_clf(x, y, test_size=3):
+    #     print('---------')
+    #     print('training inds:', t)
+    #     print('valid inds:', v)

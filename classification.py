@@ -5,13 +5,15 @@ from sklearn import datasets
 from sklearn.linear_model import SGDClassifier, LogisticRegression, \
     Perceptron, PassiveAggressiveClassifier
 
+from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.cluster import KMeans
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
+from sklearn.cluster import KMeans
+from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
 
 from utilities import *
 from universal_params import *
+
 
 def gen_classification_data(n=None):
     """
@@ -45,17 +47,6 @@ linear_models_n_params = [
       'max_depth': [2, 3, 4]
       }),
 
-    (KMeans,
-     {'algorithm': ['auto', 'full', 'elkan'],
-      'init': ['k-means++', 'random']}),
-
-    (KNeighborsClassifier,
-     {'n_neighbors': [5, 7, 10, 15, 20],
-      'weights': ['uniform', 'distance'],
-      'algorithm': ['ball_tree', 'kd_tree', 'brute'],
-      'leaf_size': [2, 3, 5, 10],
-      'p': [1, 2]}),
-
     (LogisticRegression,
      {**penalty_12, **max_iter, **tol, ** warm_start, **C,
       'solver': ['liblinear']
@@ -75,9 +66,9 @@ svm_models_n_params = [
     (SVC,
      {**C, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2}),
 
-    # (NuSVC,
-    #  {**nu, **kernel, **degree, **gamma, **coef0, **shrinking, **tol
-    #   }),
+    (NuSVC,
+     {**nu, **kernel, **degree, **gamma, **coef0, **shrinking, **tol
+      }),
 
     (LinearSVC,
      { **C, **penalty_12, **tol, **max_iter,
@@ -85,5 +76,26 @@ svm_models_n_params = [
        })
 ]
 
+
+neighbor_models_n_params = [
+
+    (KMeans,
+     {'algorithm': ['auto', 'full', 'elkan'],
+      'init': ['k-means++', 'random']}),
+
+    (KNeighborsClassifier,
+     {**n_neighbors, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
+      'weights': ['uniform', 'distance'],
+      'p': [1, 2]
+      }),
+
+    (NearestCentroid,
+     {**neighbor_metric,
+      'shrink_threshold': [1e-3, 1e-2, 0.1, 0.5, 0.9, 2]
+      })
+
+]
+
 x, y = gen_classification_data()
-big_loop(svm_models_n_params, x, y, isClassification=True)
+big_loop(svm_models_n_params,
+         StandardScaler().fit_transform(x), y, isClassification=True)

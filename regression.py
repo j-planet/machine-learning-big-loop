@@ -12,6 +12,7 @@ from sklearn.linear_model import \
     RANSACRegressor, HuberRegressor
 
 from sklearn.kernel_ridge import KernelRidge
+from sklearn.preprocessing import StandardScaler
 
 # svm models: http://scikit-learn.org/stable/modules/svm.html
 from sklearn.svm import SVR, NuSVR, LinearSVR
@@ -116,22 +117,23 @@ linear_models_n_params = [
 ]
 
 svm_models_n_params = [
-    # (SVR,
-    #  {**C, **epsilon, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2
-    #   }),
+    (SVR,
+     {**C, **epsilon, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2
+      }),
 
-    # (NuSVR,
-    #  {**C, **nu, **kernel, **degree, **gamma, **coef0, **shrinking , **tol, **max_iter_inf2
-    #  }),
+    (NuSVR,
+     {**C, **nu, **kernel, **degree, **gamma, **coef0, **shrinking , **tol, **max_iter_inf2
+     }),
 
-    (LinearSVR,
-     {**C, **epsilon, **tol, **max_iter,
-      'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive'],
-      'intercept_scaling': [0.1, 0.5, 1, 5, 10]
-      })
+    # (LinearSVR,
+    #  {**C, **epsilon, **tol, **max_iter,
+    #   'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive'],
+    #   'intercept_scaling': [0.1, 0.5, 1, 5, 10]
+    #   })
 ]
 
 
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(svm_models_n_params, x, y, isClassification=False)
+big_loop(svm_models_n_params,
+         StandardScaler().fit_transform(x), y, isClassification=False)

@@ -72,7 +72,11 @@ Feel free to contribute by hashing out the following:
 * Wrap an emsemble (bagging/boosting) model on top of the best models.
 * multi-target classification (i.e. `y` having multiple columns)
 
-
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
 
 Oh boy that was a lot of typing in the past 24 hours! Hopefully it saves you (and myself) some typing in the future. I'm gonna grab some lunch, sip a cold drink and enjoy the California summer heat. :)
 Check out more of my pet projects on [planetj.io](planetj.io).

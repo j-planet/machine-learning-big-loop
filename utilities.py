@@ -144,7 +144,7 @@ def big_loop(models_n_params, x, y, isClassification,
     winner_ind = np.argmax([v[1] for v in res])
     winner = res[winner_ind][0]
     print('='*60)
-    print('The winner is: %s with score %0.3f' % (winner.__class__.__name__, res[winner_ind][1]))
+    print('The winner is: %s with score %0.3f.' % (winner.__class__.__name__, res[winner_ind][1]))
 
     return winner, res
 

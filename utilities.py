@@ -80,15 +80,17 @@ def big_loop(models_n_params, x, y, isClassification,
     :return: the best estimator, list of [(estimator, cv score),...]
     """
 
+    def cv_():
+        return cv_clf(x, y, test_size, n_splits, random_state, doesUpsample) \
+            if isClassification \
+            else cv_reg(x, test_size, n_splits, random_state)
+
     res = []
     scoring = scoring or ('accuracy' if isClassification else 'neg_mean_squared_error')
-    cv = cv_clf(x, y, test_size, n_splits, random_state, doesUpsample) \
-        if isClassification \
-        else cv_reg(x, test_size, n_splits, random_state)
 
     for clf_Klass, parameters in models_n_params:
 
-        clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv, n_jobs=n_jobs)
+        clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv_(), n_jobs=n_jobs)
         clf_search.fit(x, y)
 
         print('--------', clf_Klass.__name__)

@@ -1,4 +1,4 @@
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge
 
 from utilities import *
 
@@ -17,8 +17,17 @@ def gen_reg_data(x_mu=10, x_sigma=1, num_samples=100, num_features=3,
 
 models_n_params = [
     (LinearRegression,
-     {'fit_intercept': [True],
-      'normalize': [True, False]})
+    {'fit_intercept': [True],
+     'normalize': [True, False],
+     'copy_X': [True]}),
+
+    (Ridge,
+     {'alpha': [1e-3, 1e-2, 0.1, 1, 2, 10],
+      'normalize': [True, False],
+      'tol': [1e-4, 1e-3, 1e-2],
+      'solver': ['auto', 'svd', 'cholesky', 'lsqr', 'sparse_cg', 'sag'],
+      'copy_X': [True]
+      })
 ]
 
 

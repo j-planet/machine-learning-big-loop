@@ -12,7 +12,7 @@ from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier, NearestCentroid, RadiusNeighborsClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
-
+from sklearn.naive_bayes import GaussianNB
 from utilities import *
 from universal_params import *
 
@@ -118,7 +118,7 @@ neighbor_models_n_params = [
       })
 ]
 
-gaussianprocee_models_n_params = [
+gaussianprocess_models_n_params = [
     (GaussianProcessClassifier,
      {**warm_start,
       'kernel': [RBF(), ConstantKernel(), DotProduct(), WhiteKernel()],
@@ -128,6 +128,10 @@ gaussianprocee_models_n_params = [
       })
 ]
 
+bayes_models_n_params = [
+    (GaussianNB, {})
+]
+
 x, y = gen_classification_data()
-big_loop(gaussianprocee_models_n_params,
+big_loop(bayes_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=True)

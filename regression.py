@@ -169,7 +169,7 @@ neighbor_models_n_params = [
 ]
 
 
-gaussianprocee_models_n_params = [
+gaussianprocess_models_n_params = [
     (GaussianProcessRegressor,
      {'kernel': [RBF(), ConstantKernel(), DotProduct(), WhiteKernel()],
       'n_restarts_optimizer': [3],
@@ -180,5 +180,5 @@ gaussianprocee_models_n_params = [
 
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(gaussianprocee_models_n_params,
+big_loop(gaussianprocess_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=False)

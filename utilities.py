@@ -139,11 +139,11 @@ def big_loop(models_n_params, x, y, isClassification,
             res.append((clf_Klass(), -np.inf, np.inf))
 
 
-    print('='*40)
-    print(tabulate([[m.__class__.__name__, '%.3f'%s, '%.3f'%t] for m, s, t in res], headers=['Model', 'Score', 'Time/clf (s)']))
+    print('='*60)
+    print(tabulate([[m.__class__.__name__, '%.3f'%s, '%.3f'%t] for m, s, t in res], headers=['Model', scoring, 'Time/clf (s)']))
     winner_ind = np.argmax([v[1] for v in res])
     winner = res[winner_ind][0]
-    print('='*40)
+    print('='*60)
     print('The winner is: %s with score %0.3f' % (winner.__class__.__name__, res[winner_ind][1]))
 
     return winner, res

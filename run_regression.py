@@ -274,7 +274,7 @@ nn_models_n_params_small = [
     (MLPRegressor,
      { 'hidden_layer_sizes': [(64,), (32, 64)],
        'activation': ['identity', 'tanh', 'relu'],
-       'max_iter': [1000],
+       'max_iter': [500],
        'early_stopping': [True],
        **learning_rate_small
        })

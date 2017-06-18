@@ -58,6 +58,8 @@ linear_models_n_params = [
       })
 ]
 
+linear_models_n_params_small = linear_models_n_params
+
 svm_models_n_params = [
     (SVC,
      {**C, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2}),
@@ -117,7 +119,7 @@ gaussianprocess_models_n_params = [
     (GaussianProcessClassifier,
      {**warm_start,
       'kernel': [RBF(), ConstantKernel(), DotProduct(), WhiteKernel()],
-      'max_iter_predict': max_iter['max_iter'],
+      'max_iter_predict': [500],
       'n_restarts_optimizer': [3],
       })
 ]
@@ -135,6 +137,17 @@ nn_models_n_params = [
        'max_iter': [1000],
        'early_stopping': [True, False],
        'epsilon': [1e-8, 1e-5]
+       })
+]
+
+nn_models_n_params_small = [
+    (MLPClassifier,
+     { 'hidden_layer_sizes': [(64,), (32, 64)],
+       'batch_size': ['auto', 50],
+       'activation': ['identity', 'tanh', 'relu'],
+       'max_iter': [500],
+       'early_stopping': [True],
+       **learning_rate_small
        })
 ]
 
@@ -174,11 +187,49 @@ tree_models_n_params_small = [
 ]
 
 
+
+def run_linear_models(x, y, small = True, normalize_x = True):
+    return big_loop(linear_models_n_params_small if small else linear_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=True)
+
+def run_svm_models(x, y, small = True, normalize_x = True):
+    return big_loop(svm_models_n_params_small if small else svm_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=True)
+
+def run_neighbor_models(x, y, normalize_x = True):
+    return big_loop(neighbor_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=True)
+
+def run_gaussian_models(x, y, normalize_x = True):
+    return big_loop(gaussianprocess_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=True)
+
+def run_nn_models(x, y, small = True, normalize_x = True):
+    return big_loop(nn_models_n_params_small if small else nn_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=True)
+
+def run_tree_models(x, y, small = True, normalize_x = True):
+    return big_loop(tree_models_n_params_small if small else tree_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=True)
+
+def run_all(x, y, small = True, normalize_x = True, n_jobs=cpu_count()-1):
+
+    all_params = (linear_models_n_params_small if small else linear_models_n_params) + \
+                 (nn_models_n_params_small if small else nn_models_n_params) + \
+                 ([] if small else gaussianprocess_models_n_params) + neighbor_models_n_params + \
+                 (svm_models_n_params_small if small else svm_models_n_params) + \
+                 (tree_models_n_params_small if small else tree_models_n_params)
+
+    return big_loop(all_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y,
+                    isClassification=True, n_jobs=n_jobs)
+
+
+
 if __name__ == '__main__':
 
     x, y = gen_classification_data()
-    big_loop(tree_models_n_params_small,
-             StandardScaler().fit_transform(x), y, isClassification=True)
+    run_all(x, y, n_jobs=1)
 
 
 

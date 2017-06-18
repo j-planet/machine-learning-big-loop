@@ -1,10 +1,13 @@
-
+from pprint import pprint
 import numpy as np
 nan = float('nan')
 from collections import Counter
 from multiprocessing import cpu_count
 
+from sklearn.cluster import KMeans
 from sklearn.model_selection import StratifiedShuffleSplit as sss, ShuffleSplit as ss, GridSearchCV
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+
 
 
 
@@ -86,26 +89,38 @@ def big_loop(models_n_params, x, y, isClassification,
             else cv_reg(x, test_size, n_splits, random_state)
 
     res = []
+    num_features = x.shape[1]
     scoring = scoring or ('accuracy' if isClassification else 'neg_mean_squared_error')
+    print('Scoring criteria:', scoring)
 
-    for clf_Klass, parameters in models_n_params:
+    for i, (clf_Klass, parameters) in enumerate(models_n_params):
+        try:
+            print('-'*15, 'model %d/%d' % (i+1, len(models_n_params)), '-'*15)
+            print(clf_Klass.__name__)
 
-        clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv_(), n_jobs=n_jobs)
-        clf_search.fit(x, y)
+            if clf_Klass == KMeans:
+                parameters['n_clusters'] = [len(np.unique(y))]
+            elif clf_Klass in [RandomForestClassifier, GradientBoostingClassifier]:
+                parameters['max_features'] = [v for v in parameters['max_features']
+                                              if v is None or type(v)==str or v<=num_features]
 
-        print('--------', clf_Klass.__name__)
+            clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv_(), n_jobs=n_jobs)
+            clf_search.fit(x, y)
 
-        print('best score:', clf_search.best_score_)
-        print('best params:', clf_search.best_params_)
+            print('best score:', clf_search.best_score_)
+            print('best params:')
+            pprint(clf_search.best_params_)
 
-        if verbose:
-            print('validation scores:', clf_search.cv_results_['mean_test_score'])
-            print('training scores:', clf_search.cv_results_['mean_train_score'])
+            if verbose:
+                print('validation scores:', clf_search.cv_results_['mean_test_score'])
+                print('training scores:', clf_search.cv_results_['mean_train_score'])
 
-        res.append((clf_search.best_estimator_, clf_search.best_score_))
+            res.append((clf_search.best_estimator_, clf_search.best_score_))
+        except Exception as e:
+            print('ERROR:', e)
 
     winner = res[np.argmax([v[1] for v in res])][0]
-    print('='*15)
+    print('='*40)
     print('The winner is:', winner.__class__.__name__)
 
     return winner, res

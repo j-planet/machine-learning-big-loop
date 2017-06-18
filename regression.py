@@ -21,10 +21,10 @@ from sklearn.svm import SVR, NuSVR, LinearSVR
 from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
 
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, WhiteKernel
 from sklearn.neural_network import MLPRegressor
 
-from sklearn.ensemble import GradientBoostingRegressor, AdaBoostRegressor, ExtraTreesRegressor, RandomForestRegressor
+from sklearn.ensemble import AdaBoostRegressor, ExtraTreesRegressor, RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 
 from utilities import *
@@ -196,15 +196,6 @@ nn_models_n_params = [
 ]
 
 tree_models_n_params = [
-    # (GradientBoostingRegressor,
-    #  {**tree_learning_rate, **n_estimators, **max_depth,
-    #   **min_samples_split, **min_samples_leaf, **max_features, **min_impurity_split,
-    #   **warm_start,
-    #   'alpha': [0.5, 0.9],
-    #   'criterion': ['friedman_mse', 'mae'],
-    #      'loss': ['ls', 'lad', 'huber', 'quantile'],
-    #   'subsample': [0.8, 0.1]
-    #   }),
 
     (DecisionTreeRegressor,
      {**max_features, **max_depth, **min_samples_split, **min_samples_leaf, **min_impurity_split,
@@ -228,7 +219,9 @@ tree_models_n_params_small = [
       'criterion': ['mse', 'mae']})
 ]
 
-x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
+if __name__ == '__main__':
 
-big_loop(tree_models_n_params,
-         StandardScaler().fit_transform(x), y, isClassification=False)
+    x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
+
+    big_loop(tree_models_n_params,
+             StandardScaler().fit_transform(x), y, isClassification=False)

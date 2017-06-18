@@ -6,7 +6,7 @@ from sklearn.linear_model import SGDClassifier, LogisticRegression, \
     Perceptron, PassiveAggressiveClassifier
 
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, ExtraTreesClassifier
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier, NearestCentroid, RadiusNeighborsClassifier
@@ -117,7 +117,6 @@ gaussianprocess_models_n_params = [
     (GaussianProcessClassifier,
      {**warm_start,
       'kernel': [RBF(), ConstantKernel(), DotProduct(), WhiteKernel()],
-      # 'kernel': [RBF(), ConstantKernel(), DotProduct(), Matern(), StationaryKernelMixin(), WhiteKernel()],
       'max_iter_predict': max_iter['max_iter'],
       'n_restarts_optimizer': [3],
       })
@@ -174,9 +173,12 @@ tree_models_n_params_small = [
       **min_samples_split, **min_samples_leaf})
 ]
 
-x, y = gen_classification_data()
-big_loop(tree_models_n_params_small,
-         StandardScaler().fit_transform(x), y, isClassification=True)
+
+if __name__ == '__main__':
+
+    x, y = gen_classification_data()
+    big_loop(tree_models_n_params_small,
+             StandardScaler().fit_transform(x), y, isClassification=True)
 
 
 

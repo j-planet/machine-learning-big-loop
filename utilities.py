@@ -158,7 +158,7 @@ if __name__ == '__main__':
         print('training inds:', t)
         print('valid inds:', v)
 
-        # for t, v in cv_clf(x, y, test_size=3):
-        #     print('---------')
-        #     print('training inds:', t)
-        #     print('valid inds:', v)
+    for t, v in cv_clf(x, y, test_size=3):
+        print('---------')
+        print('training inds:', t)
+        print('valid inds:', v)

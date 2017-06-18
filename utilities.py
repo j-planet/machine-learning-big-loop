@@ -3,6 +3,7 @@ import numpy as np
 nan = float('nan')
 from collections import Counter
 from multiprocessing import cpu_count
+from time import time
 
 from sklearn.cluster import KMeans
 from sklearn.model_selection import StratifiedShuffleSplit as sss, ShuffleSplit as ss, GridSearchCV
@@ -69,6 +70,16 @@ def cv_clf(x, y,
 def cv_reg(x, test_size = 0.2, n_splits = 5, random_state=None):
     return ss(n_splits, test_size, random_state=random_state).split(x)
 
+def timeit(klass, params, x, y):
+    """
+    time in seconds
+    """
+
+    start = time()
+    clf = klass(**params)
+    clf.fit(x, y)
+
+    return time() - start
 
 def big_loop(models_n_params, x, y, isClassification,
              test_size = 0.2, n_splits = 5, random_state=None, doesUpsample=True,
@@ -107,7 +118,8 @@ def big_loop(models_n_params, x, y, isClassification,
             clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv_(), n_jobs=n_jobs)
             clf_search.fit(x, y)
 
-            print('best score:', clf_search.best_score_)
+            timespent = timeit(clf_Klass, clf_search.best_params_, x, y)
+            print('best score:', clf_search.best_score_, 'time spent: %0.3f seconds' % timespent)
             print('best params:')
             pprint(clf_search.best_params_)
 
@@ -115,13 +127,15 @@ def big_loop(models_n_params, x, y, isClassification,
                 print('validation scores:', clf_search.cv_results_['mean_test_score'])
                 print('training scores:', clf_search.cv_results_['mean_train_score'])
 
-            res.append((clf_search.best_estimator_, clf_search.best_score_))
+            res.append((clf_search.best_estimator_, clf_search.best_score_, timespent))
+
         except Exception as e:
             print('ERROR:', e)
 
-    winner = res[np.argmax([v[1] for v in res])][0]
+    winner_ind = np.argmax([v[1] for v in res])
+    winner = res[winner_ind][0]
     print('='*40)
-    print('The winner is:', winner.__class__.__name__)
+    print('The winner is: %s with score %0.3f' % (winner.__class__.__name__, res[winner_ind][1]))
 
     return winner, res
 

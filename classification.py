@@ -6,6 +6,7 @@ from sklearn.linear_model import SGDClassifier, LogisticRegression, \
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC, LinearSVC, NuSVC
 
 from utilities import *
 from universal_params import *
@@ -26,41 +27,41 @@ def gen_classification_data(n=None):
 
     return x, y
 
-models_n_params = [
-    # (SGDClassifier,
-    #  {'loss': ['hinge', 'log', 'modified_huber', 'squared_hinge'],
-    #   'alpha': [0.0001, 0.001, 0.1],
-    #   **penalty_12none
-    #   }),
-    #
-    # (RandomForestClassifier,
-    #  {**max_features, **n_estimators,
-    #   'min_samples_leaf': [2, 3]}),
-    #
-    # (GradientBoostingClassifier,
-    #  {**max_features, **n_estimators,
-    #   'max_depth': [2, 3, 4]
-    #   }),
-    #
-    # (KMeans,
-    #  {'algorithm': ['auto', 'full', 'elkan'],
-    #   'init': ['k-means++', 'random']}),
-    #
-    # (KNeighborsClassifier,
-    #  {'n_neighbors': [5, 7, 10, 15, 20],
-    #   'weights': ['uniform', 'distance'],
-    #   'algorithm': ['ball_tree', 'kd_tree', 'brute'],
-    #   'leaf_size': [2, 3, 5, 10],
-    #   'p': [1, 2]}),
-    #
-    # (LogisticRegression,
-    #  {**penalty_12, **max_iter, **tol, ** warm_start, **C,
-    #   'solver': ['liblinear']
-    #   }),
-    #
-    # (Perceptron,
-    #  {**penalty_all, **alpha, **n_iter, **eta0, **warm_start
-    #   }),
+linear_models_n_params = [
+    (SGDClassifier,
+     {'loss': ['hinge', 'log', 'modified_huber', 'squared_hinge'],
+      'alpha': [0.0001, 0.001, 0.1],
+      **penalty_12none
+      }),
+
+    (RandomForestClassifier,
+     {**max_features, **n_estimators,
+      'min_samples_leaf': [2, 3]}),
+
+    (GradientBoostingClassifier,
+     {**max_features, **n_estimators,
+      'max_depth': [2, 3, 4]
+      }),
+
+    (KMeans,
+     {'algorithm': ['auto', 'full', 'elkan'],
+      'init': ['k-means++', 'random']}),
+
+    (KNeighborsClassifier,
+     {'n_neighbors': [5, 7, 10, 15, 20],
+      'weights': ['uniform', 'distance'],
+      'algorithm': ['ball_tree', 'kd_tree', 'brute'],
+      'leaf_size': [2, 3, 5, 10],
+      'p': [1, 2]}),
+
+    (LogisticRegression,
+     {**penalty_12, **max_iter, **tol, ** warm_start, **C,
+      'solver': ['liblinear']
+      }),
+
+    (Perceptron,
+     {**penalty_all, **alpha, **n_iter, **eta0, **warm_start
+      }),
 
     (PassiveAggressiveClassifier,
      {**C, **n_iter, **warm_start,
@@ -68,5 +69,10 @@ models_n_params = [
       })
 ]
 
+svm_models_n_params = [
+    (SVC,
+     {**C, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2})
+]
+
 x, y = gen_classification_data()
-big_loop(models_n_params, x, y, isClassification=True)
+big_loop(linear_models_n_params, x, y, isClassification=True)

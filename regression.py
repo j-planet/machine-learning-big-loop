@@ -9,6 +9,8 @@ from sklearn.linear_model import \
     PassiveAggressiveRegressor, \
     RANSACRegressor, HuberRegressor
 
+from sklearn.kernel_ridge import KernelRidge
+
 from utilities import *
 from universal_params import *
 
@@ -25,7 +27,7 @@ def gen_reg_data(x_mu=10., x_sigma=1., num_samples=100, num_features=3,
     return x, y
 
 
-models_n_params = [
+linear_models_n_params = [
     (LinearRegression, normalize),
 
     (Ridge,
@@ -66,6 +68,7 @@ models_n_params = [
          'lambda_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
      }),
 
+    # WARNING: ARDRegression takes a long time to run
     (ARDRegression,
      {'n_iter': [100, 300, 1000],
       **tol, **normalize,
@@ -101,6 +104,12 @@ models_n_params = [
      { 'epsilon': [1.1, 1.35, 1.5, 2],
        **max_iter, **alpha, **warm_start, **tol
        })
+]
+
+models_n_params = [
+    (KernelRidge,
+     {**alpha, **degree, **gamma, **coef0
+     })
 ]
 
 

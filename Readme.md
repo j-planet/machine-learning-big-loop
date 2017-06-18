@@ -26,7 +26,7 @@ Note: I skipped GradientTreeBoosting due to sub-par model performance, long run-
 # USAGE
 
 ### How to run
-1. Feed in `X` (2-D `numpy.array`) and y (1-D `numpy.array`). (The code also has fake data generated for testing purposes.)
+1. Feed in `X` (2-D `numpy.array`) and `y` (1-D `numpy.array`). (The code also has fake data generated for testing purposes.)
 2. Use `run_classification` or `run_regression` where appropriate. 
 
 ### Knobs

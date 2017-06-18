@@ -8,10 +8,13 @@ from tabulate import tabulate
 
 from sklearn.cluster import KMeans
 from sklearn.model_selection import StratifiedShuffleSplit as sss, ShuffleSplit as ss, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, \
+    ExtraTreesClassifier, ExtraTreesRegressor, AdaBoostClassifier, AdaBoostRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 
-
+TREE_N_ENSEMBLE_MODELS = [RandomForestClassifier, GradientBoostingClassifier, DecisionTreeClassifier, DecisionTreeRegressor,
+                          ExtraTreesClassifier, ExtraTreesRegressor, AdaBoostClassifier, AdaBoostRegressor]
 
 def upsample_indices_clf(inds, y):
     """
@@ -112,7 +115,7 @@ def big_loop(models_n_params, x, y, isClassification,
 
             if clf_Klass == KMeans:
                 parameters['n_clusters'] = [len(np.unique(y))]
-            elif clf_Klass in [RandomForestClassifier, GradientBoostingClassifier]:
+            elif clf_Klass in TREE_N_ENSEMBLE_MODELS:
                 parameters['max_features'] = [v for v in parameters['max_features']
                                               if v is None or type(v)==str or v<=num_features]
 

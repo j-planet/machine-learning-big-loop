@@ -24,6 +24,9 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
 from sklearn.neural_network import MLPRegressor
 
+from sklearn.ensemble import GradientBoostingRegressor, AdaBoostRegressor, ExtraTreesRegressor, RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
+
 from utilities import *
 from universal_params import *
 
@@ -125,11 +128,11 @@ linear_models_n_params = [
 
 svm_models_n_params_small = [
     (SVR,
-     {**C_small, **epsilon, **kernel, **degree, **gamma_small, **coef0_small, **shrinking
+     {**kernel, **degree, **shrinking
       }),
 
     (NuSVR,
-     {**C_small, **nu_small, **kernel, **degree, **gamma_small, **coef0_small, **shrinking,
+     {**nu_small, **kernel, **degree, **shrinking,
       }),
 
     (LinearSVR,
@@ -182,7 +185,7 @@ gaussianprocess_models_n_params = [
 
 nn_models_n_params = [
     (MLPRegressor,
-     { 'hidden_layer_sizes': [(16,), (64,), (100,), (32, 32), (32, 64)],
+     { 'hidden_layer_sizes': [(16,), (64,), (100,), (32, 32)],
        'activation': ['identity', 'logistic', 'tanh', 'relu'],
        **alpha, **learning_rate, **tol, **warm_start,
        'batch_size': ['auto', 50],
@@ -192,7 +195,40 @@ nn_models_n_params = [
        })
 ]
 
+tree_models_n_params = [
+    # (GradientBoostingRegressor,
+    #  {**tree_learning_rate, **n_estimators, **max_depth,
+    #   **min_samples_split, **min_samples_leaf, **max_features, **min_impurity_split,
+    #   **warm_start,
+    #   'alpha': [0.5, 0.9],
+    #   'criterion': ['friedman_mse', 'mae'],
+    #      'loss': ['ls', 'lad', 'huber', 'quantile'],
+    #   'subsample': [0.8, 0.1]
+    #   }),
+
+    (DecisionTreeRegressor,
+     {**max_features, **max_depth, **min_samples_split, **min_samples_leaf, **min_impurity_split,
+         'criterion': ['mse', 'mae']}),
+
+    (ExtraTreesRegressor,
+     {**n_estimators, **max_features, **max_depth, **min_samples_split,
+      **min_samples_leaf, **min_impurity_split, **warm_start,
+      'criterion': ['mse', 'mae']}),
+
+]
+
+tree_models_n_params_small = [
+    (DecisionTreeRegressor,
+     {**max_features_small, **max_depth_small, **min_samples_split, **min_samples_leaf,
+      'criterion': ['mse', 'mae']}),
+
+    (ExtraTreesRegressor,
+     {**n_estimators_small, **max_features_small, **max_depth_small, **min_samples_split,
+      **min_samples_leaf,
+      'criterion': ['mse', 'mae']})
+]
+
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(nn_models_n_params,
+big_loop(tree_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=False)

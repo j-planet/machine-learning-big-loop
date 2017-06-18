@@ -57,7 +57,7 @@ The output looks this:
 |DecisionTreeClassifier       |     0.960      |      0.000       |
 |ExtraTreesClassifier         |     0.993     |      0.002   |
 
-The winner is: ExtraTreesClassifier with score 0.993
+*The winner is: ExtraTreesClassifier with score 0.993.*
 
 # TO-DO'S
 

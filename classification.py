@@ -10,6 +10,8 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier, NearestCentroid, RadiusNeighborsClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
 
 from utilities import *
 from universal_params import *
@@ -116,6 +118,16 @@ neighbor_models_n_params = [
       })
 ]
 
+gaussianprocee_models_n_params = [
+    (GaussianProcessClassifier,
+     {**warm_start,
+      'kernel': [RBF(), ConstantKernel(), DotProduct(), WhiteKernel()],
+      # 'kernel': [RBF(), ConstantKernel(), DotProduct(), Matern(), StationaryKernelMixin(), WhiteKernel()],
+      'max_iter_predict': max_iter['max_iter'],
+      'n_restarts_optimizer': [3],
+      })
+]
+
 x, y = gen_classification_data()
-big_loop(neighbor_models_n_params,
+big_loop(gaussianprocee_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=True)

@@ -20,6 +20,9 @@ from sklearn.svm import SVR, NuSVR, LinearSVR
 # neighbor models: http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.RadiusNeighborsRegressor.html#sklearn.neighbors.RadiusNeighborsRegressor
 from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
 
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
+
 from utilities import *
 from universal_params import *
 
@@ -165,7 +168,17 @@ neighbor_models_n_params = [
       })
 ]
 
+
+gaussianprocee_models_n_params = [
+    (GaussianProcessRegressor,
+     {'kernel': [RBF(), ConstantKernel(), DotProduct(), WhiteKernel()],
+      'n_restarts_optimizer': [3],
+      'alpha': [1e-10, 1e-5],
+      'normalize_y': [True, False]
+      })
+]
+
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(neighbor_models_n_params,
+big_loop(gaussianprocee_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=False)

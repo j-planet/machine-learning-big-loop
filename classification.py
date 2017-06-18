@@ -13,6 +13,8 @@ from sklearn.neighbors import KNeighborsClassifier, NearestCentroid, RadiusNeigh
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
+
 from utilities import *
 from universal_params import *
 
@@ -132,6 +134,18 @@ bayes_models_n_params = [
     (GaussianNB, {})
 ]
 
+nn_models_n_params = [
+    (MLPClassifier,
+     { 'hidden_layer_sizes': [(16,), (64,), (100,), (32, 32), (32, 64)],
+       'activation': ['identity', 'logistic', 'tanh', 'relu'],
+       **alpha, **learning_rate, **tol, **warm_start,
+       'batch_size': ['auto', 50],
+       'max_iter': [1000],
+       'early_stopping': [True, False],
+       'epsilon': [1e-8, 1e-5]
+       })
+]
+
 x, y = gen_classification_data()
-big_loop(bayes_models_n_params,
+big_loop(nn_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=True)

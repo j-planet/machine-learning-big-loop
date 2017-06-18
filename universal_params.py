@@ -36,3 +36,4 @@ neighbor_algo = {'algorithm': ['ball_tree', 'kd_tree', 'brute']}
 neighbor_leaf_size = {'leaf_size': [1, 2, 5, 10, 20, 30, 50, 100]}
 neighbor_metric = {'metric': ['cityblock', 'euclidean', 'l1', 'l2', 'manhattan']}
 neighbor_radius = {'radius': [1e-2, 0.1, 1, 5, 10]}
+learning_rate = {'learning_rate': ['constant', 'invscaling', 'adaptive']}

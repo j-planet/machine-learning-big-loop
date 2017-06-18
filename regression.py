@@ -22,6 +22,7 @@ from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
 
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern, StationaryKernelMixin, WhiteKernel
+from sklearn.neural_network import MLPRegressor
 
 from utilities import *
 from universal_params import *
@@ -178,7 +179,20 @@ gaussianprocess_models_n_params = [
       })
 ]
 
+
+nn_models_n_params = [
+    (MLPRegressor,
+     { 'hidden_layer_sizes': [(16,), (64,), (100,), (32, 32), (32, 64)],
+       'activation': ['identity', 'logistic', 'tanh', 'relu'],
+       **alpha, **learning_rate, **tol, **warm_start,
+       'batch_size': ['auto', 50],
+       'max_iter': [1000],
+       'early_stopping': [True, False],
+       'epsilon': [1e-8, 1e-5]
+       })
+]
+
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(gaussianprocess_models_n_params,
+big_loop(nn_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=False)

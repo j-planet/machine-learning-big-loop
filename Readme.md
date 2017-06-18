@@ -33,7 +33,7 @@ Note: I skipped GradientTreeBoosting due to sub-par model performance, long run-
 
 * Evaluation criteria
 
-By default classification uses accuracy and regression uses negative MSE, given by the parameter of the `big_loop` function in `utilities.py`. It also accepts any `sklearn` scoring string.
+  By default classification uses accuracy and regression uses negative MSE, given by the parameter of the `big_loop` function in `utilities.py`. It also accepts any `sklearn` scoring string.
 
 * Scale
 

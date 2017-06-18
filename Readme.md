@@ -30,11 +30,17 @@ Note: I skipped GradientTreeBoosting due to sub-par model performance, long run-
 2. Use `run_classification` or `run_regression` where appropriate. 
 
 ### Knobs
+
 * Evaluation criteria
-  By default classification uses accuracy and regression uses negative MSE, given by the parameter of the `big_loop` function in `utilities.py`. It also accepts any `sklearn` scoring string.
+
+By default classification uses accuracy and regression uses negative MSE, given by the parameter of the `big_loop` function in `utilities.py`. It also accepts any `sklearn` scoring string.
+
 * Scale
+
   Because it takes a long time to run through all models and hyperparameters at full-blown scale, there is a "small" and a full version of hyperparameters for almost every model. The "small" ones run much faster by evaluating only the most essential hyperparameters in smaller ranges than the full version. It's controlled by the `small` parameter of all of the `run_all` functions.
+
 * Hyperparameters
+
   You can modify the search space of hyperparameters in `run_regression.py` and `run_classification.py`.
 
 The output looks this:

@@ -4,6 +4,7 @@ nan = float('nan')
 from collections import Counter
 from multiprocessing import cpu_count
 from time import time
+from tabulate import tabulate
 
 from sklearn.cluster import KMeans
 from sklearn.model_selection import StratifiedShuffleSplit as sss, ShuffleSplit as ss, GridSearchCV
@@ -132,6 +133,9 @@ def big_loop(models_n_params, x, y, isClassification,
         except Exception as e:
             print('ERROR:', e)
 
+
+    print('='*40)
+    print(tabulate([[m.__class__.__name__, '%.3f'%s, '%.3f'%t] for m, s, t in res], headers=['Model', 'Score', 'Time (s)']))
     winner_ind = np.argmax([v[1] for v in res])
     winner = res[winner_ind][0]
     print('='*40)

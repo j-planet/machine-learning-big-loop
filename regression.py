@@ -5,7 +5,9 @@ from sklearn.linear_model import \
     Lars, LassoLars, \
     OrthogonalMatchingPursuit, \
     BayesianRidge, ARDRegression, \
-    SGDRegressor
+    SGDRegressor, \
+    PassiveAggressiveRegressor, \
+    RANSACRegressor, HuberRegressor
 
 from utilities import *
 from universal_params import *
@@ -24,80 +26,81 @@ def gen_reg_data(x_mu=10., x_sigma=1., num_samples=100, num_features=3,
 
 
 models_n_params = [
-    # (LinearRegression,
-    # {'normalize': [True, False]
-    #  }),
-    #
-    # (Ridge,
-    #  {'alpha': [1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 2, 10],
-    #   'normalize': [True, False],
-    #   'tol': [1e-4, 1e-3, 1e-2],
-    #   'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'sag']
-    #   }),
-    #
-    # (Lasso,
-    #  {'alpha': [1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 2, 10],
-    #   'normalize': [True, False],
-    #   'tol': [1e-4, 1e-3, 1e-2],
-    #   'warm_start': [True, False]
-    #   }),
-    #
-    # (ElasticNet,
-    #  {'alpha': [1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 2, 10],
-    #   'l1_ratio': [0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9],
-    #   'normalize': [True, False],
-    #   'tol': [1e-4, 1e-3, 1e-2]
-    #  }),
+    (LinearRegression, normalize),
 
-    # (Lars,
-    #  {'normalize': [True, False],
-    #   'n_nonzero_coefs': [100, 300, 500, np.inf],
-    #   }),
+    (Ridge,
+     {**alpha, **normalize, **tol,
+      'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'sag']
+      }),
 
-    # (LassoLars,
-    #  {'normalize': [True, False],
-    #   'max_iter': [100, 300, 500, np.inf],
-    #   'alpha': [1e-5, 1e-4, 1e-3, 1e-2, 0.1, 1, 10],
-    #   }),
-    #
-    # (OrthogonalMatchingPursuit,
-    #  {'n_nonzero_coefs': [100, 300, 500, np.inf, None],
-    #   'tol': [1e-4, 1e-3, 1e-2],
-    #   'normalize': [True, False]
-    #   }),
+    (Lasso,
+     {**alpha, **normalize, **tol, **warm_start
+      }),
 
-    # (BayesianRidge,
-    #  {
-    #      'n_iter': [100, 300, 1000],
-    #      'tol': [1e-4, 1e-3, 1e-2],
-    #      'alpha_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #      'alpha_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #      'lambda_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #      'lambda_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #      'normalize': [True, False]
-    #  }),
-    #
-    # (ARDRegression,
-    #  {'n_iter': [100, 300, 1000],
-    #   'tol': [1e-4, 1e-3, 1e-2],
-    #   'alpha_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #   'alpha_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #   'lambda_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #   'lambda_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
-    #   'normalize': [True, False],
-    #   'threshold_lambda': [1e2, 1e3, 1e4, 1e6]}),
+    (ElasticNet,
+     {**alpha, **normalize, **tol,
+      'l1_ratio': [0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9],
+      }),
+
+    (Lars,
+     {**normalize,
+      'n_nonzero_coefs': [100, 300, 500, np.inf],
+      }),
+
+    (LassoLars,
+     {**normalize, **max_iter_inf, **normalize, **alpha
+      }),
+
+    (OrthogonalMatchingPursuit,
+     {'n_nonzero_coefs': [100, 300, 500, np.inf, None],
+      **tol, **normalize
+      }),
+
+    (BayesianRidge,
+     {
+         'n_iter': [100, 300, 1000],
+         **tol, **normalize,
+         'alpha_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
+         'alpha_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
+         'lambda_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
+         'lambda_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
+     }),
+
+    (ARDRegression,
+     {'n_iter': [100, 300, 1000],
+      **tol, **normalize,
+      'alpha_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
+      'alpha_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
+      'lambda_1': [1e-6, 1e-4, 1e-2, 0.1, 0],
+      'lambda_2': [1e-6, 1e-4, 1e-2, 0.1, 0],
+      'threshold_lambda': [1e2, 1e3, 1e4, 1e6]}),
 
     (SGDRegressor,
      {'loss': ['squared_loss', 'huber', 'epsilon_insensitive', 'squared_epsilon_insensitive'],
-      'penalty': ['l1', 'l2', 'elasticnet'],
+      **penalty_12e, **n_iter, **epsilon, **eta0,
       'alpha': [1e-6, 1e-5, 1e-2, 'optimal'],
       'l1_ratio': [0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9],
-      **n_iter,
-      'epsilon': [1e-3, 1e-2, 0.1, 0],
       'learning_rate': ['constant', 'optimal', 'invscaling'],
-      **eta0,
       'power_t': [0.1, 0.25, 0.5]
-      })
+      }),
+
+    (PassiveAggressiveRegressor,
+     {**C, **epsilon, **n_iter, **warm_start,
+      'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive']
+      }),
+
+    (RANSACRegressor,
+     {'min_samples': [0.1, 0.5, 0.9, None],
+      'max_trials': n_iter['n_iter'],
+      'stop_score': [0.8, 0.9, 1],
+      'stop_probability': [0.9, 0.95, 0.99, 1],
+      'loss': ['absolute_loss', 'squared_loss']
+      }),
+
+    (HuberRegressor,
+     { 'epsilon': [1.1, 1.35, 1.5, 2],
+       **max_iter, **alpha, **warm_start, **tol
+       })
 ]
 
 

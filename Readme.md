@@ -5,6 +5,8 @@ Many believe that
 
 So one glorious weekend, I decided to type out said loop!
 
+![And I thought Machine Learning was hard.](https://user-images.githubusercontent.com/2030548/27264037-f532cb72-542a-11e7-9b37-d776f5a09a08.png)
+
 # HOW IT WORKS
 Runs through all `sklearn` models (both classification and regression), with **all possible hyperparameters**, and rank using cross-validation.
 

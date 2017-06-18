@@ -1,5 +1,7 @@
-# linear models:
-# http://scikit-learn.org/stable/modules/linear_model.html#stochastic-gradient-descent-sgd
+import warnings
+warnings.filterwarnings('ignore')
+
+# linear models: http://scikit-learn.org/stable/modules/linear_model.html#stochastic-gradient-descent-sgd
 from sklearn.linear_model import \
     LinearRegression, Ridge, Lasso, ElasticNet, \
     Lars, LassoLars, \
@@ -10,6 +12,9 @@ from sklearn.linear_model import \
     RANSACRegressor, HuberRegressor
 
 from sklearn.kernel_ridge import KernelRidge
+
+# svm models: http://scikit-learn.org/stable/modules/svm.html
+from sklearn.svm import SVR, NuSVR, LinearSVR
 
 from utilities import *
 from universal_params import *
@@ -103,16 +108,30 @@ linear_models_n_params = [
     (HuberRegressor,
      { 'epsilon': [1.1, 1.35, 1.5, 2],
        **max_iter, **alpha, **warm_start, **tol
-       })
-]
+       }),
 
-models_n_params = [
     (KernelRidge,
      {**alpha, **degree, **gamma, **coef0
-     })
+      })
+]
+
+svm_models_n_params = [
+    # (SVR,
+    #  {**C, **epsilon, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2
+    #   }),
+
+    # (NuSVR,
+    #  {**C, **nu, **kernel, **degree, **gamma, **coef0, **shrinking , **tol, **max_iter_inf2
+    #  }),
+
+    (LinearSVR,
+     {**C, **epsilon, **tol, **max_iter,
+      'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive'],
+      'intercept_scaling': [0.1, 0.5, 1, 5, 10]
+      })
 ]
 
 
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(models_n_params, x, y, isClassification=False)
+big_loop(svm_models_n_params, x, y, isClassification=False)

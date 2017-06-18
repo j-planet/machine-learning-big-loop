@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore')
 import numpy as np
 from sklearn import datasets
 from sklearn.linear_model import SGDClassifier, LogisticRegression, \
@@ -71,8 +73,17 @@ linear_models_n_params = [
 
 svm_models_n_params = [
     (SVC,
-     {**C, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2})
+     {**C, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2}),
+
+    # (NuSVC,
+    #  {**nu, **kernel, **degree, **gamma, **coef0, **shrinking, **tol
+    #   }),
+
+    (LinearSVC,
+     { **C, **penalty_12, **tol, **max_iter,
+       'loss': ['hinge', 'squared_hinge'],
+       })
 ]
 
 x, y = gen_classification_data()
-big_loop(linear_models_n_params, x, y, isClassification=True)
+big_loop(svm_models_n_params, x, y, isClassification=True)

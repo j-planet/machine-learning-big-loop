@@ -2,6 +2,7 @@
 import numpy as np
 nan = float('nan')
 from collections import Counter
+from multiprocessing import cpu_count
 
 from sklearn.model_selection import StratifiedShuffleSplit as sss, ShuffleSplit as ss, GridSearchCV
 
@@ -68,24 +69,26 @@ def cv_reg(x, test_size = 0.2, n_splits = 5, random_state=None):
 
 def big_loop(models_n_params, x, y, isClassification,
              test_size = 0.2, n_splits = 5, random_state=None, doesUpsample=True,
-             scoring='accuracy',
-             verbose=False):
+             scoring=None,
+             verbose=False, n_jobs = cpu_count()-1):
     """
     runs through all model classes with their perspective hyper parameters
     :param models_n_params: [(model class, hyper parameters),...]
     :param isClassification: whether it's a classification or regression problem
     :type isClassification: bool
+    :param scoring: by default 'accuracy' for classification; 'neg_mean_squared_error' for regression
     :return: the best estimator, list of [(estimator, cv score),...]
     """
 
     res = []
+    scoring = scoring or ('accuracy' if isClassification else 'neg_mean_squared_error')
     cv = cv_clf(x, y, test_size, n_splits, random_state, doesUpsample) \
         if isClassification \
         else cv_reg(x, test_size, n_splits, random_state)
 
     for clf_Klass, parameters in models_n_params:
 
-        clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv)
+        clf_search = GridSearchCV(clf_Klass(), parameters, scoring, cv=cv, n_jobs=n_jobs)
         clf_search.fit(x, y)
 
         print('--------', clf_Klass.__name__)

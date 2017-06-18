@@ -17,12 +17,13 @@ def gen_reg_data(x_mu=10, x_sigma=1, num_samples=100, num_features=3,
 
 models_n_params = [
     (LinearRegression,
-     {})
+     {'fit_intercept': [True],
+      'normalize': [True, False]})
 ]
 
 
-
-
 x, y = gen_reg_data(10, 2, 100, 5, sum, 1)
+reg = LinearRegression(normalize=False)
+reg.fit(x,y)
 
-big_loop()
+big_loop(models_n_params, x, y, isClassification=False)

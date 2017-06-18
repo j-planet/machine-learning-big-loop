@@ -132,6 +132,7 @@ def big_loop(models_n_params, x, y, isClassification,
 
         except Exception as e:
             print('ERROR:', e)
+            res.append((clf_Klass(), -np.inf, np.inf))
 
 
     print('='*40)

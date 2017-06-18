@@ -17,6 +17,9 @@ from sklearn.preprocessing import StandardScaler
 # svm models: http://scikit-learn.org/stable/modules/svm.html
 from sklearn.svm import SVR, NuSVR, LinearSVR
 
+# neighbor models: http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.RadiusNeighborsRegressor.html#sklearn.neighbors.RadiusNeighborsRegressor
+from sklearn.neighbors import RadiusNeighborsRegressor, KNeighborsRegressor
+
 from utilities import *
 from universal_params import *
 
@@ -116,6 +119,22 @@ linear_models_n_params = [
       })
 ]
 
+svm_models_n_params_small = [
+    (SVR,
+     {**C_small, **epsilon, **kernel, **degree, **gamma_small, **coef0_small, **shrinking
+      }),
+
+    (NuSVR,
+     {**C_small, **nu_small, **kernel, **degree, **gamma_small, **coef0_small, **shrinking,
+      }),
+
+    (LinearSVR,
+     {**C_small, **epsilon,
+      'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive'],
+      'intercept_scaling': [0.1, 1, 10]
+      })
+]
+
 svm_models_n_params = [
     (SVR,
      {**C, **epsilon, **kernel, **degree, **gamma, **coef0, **shrinking, **tol, **max_iter_inf2
@@ -125,15 +144,28 @@ svm_models_n_params = [
      {**C, **nu, **kernel, **degree, **gamma, **coef0, **shrinking , **tol, **max_iter_inf2
      }),
 
-    # (LinearSVR,
-    #  {**C, **epsilon, **tol, **max_iter,
-    #   'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive'],
-    #   'intercept_scaling': [0.1, 0.5, 1, 5, 10]
-    #   })
+    (LinearSVR,
+     {**C, **epsilon, **tol, **max_iter,
+      'loss': ['epsilon_insensitive', 'squared_epsilon_insensitive'],
+      'intercept_scaling': [0.1, 0.5, 1, 5, 10]
+      })
 ]
 
+neighbor_models_n_params = [
+    (RadiusNeighborsRegressor,
+     {**neighbor_radius, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
+      'weights': ['uniform', 'distance'],
+      'p': [1, 2],
+     }),
+
+    (KNeighborsRegressor,
+     {**n_neighbors, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
+      'p': [1, 2],
+      'weights': ['uniform', 'distance'],
+      })
+]
 
 x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
 
-big_loop(svm_models_n_params,
+big_loop(neighbor_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=False)

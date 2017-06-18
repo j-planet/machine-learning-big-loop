@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.cluster import KMeans
-from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
+from sklearn.neighbors import KNeighborsClassifier, NearestCentroid, RadiusNeighborsClassifier
 
 from utilities import *
 from universal_params import *
@@ -76,26 +76,46 @@ svm_models_n_params = [
        })
 ]
 
+svm_models_n_params_small = [
+    (SVC,
+     {**C_small, **kernel, **degree, **gamma_small, **coef0_small, **shrinking
+      }),
+
+    (NuSVC,
+     {**nu_small, **kernel, **degree, **gamma_small, **coef0_small, **shrinking
+      }),
+
+    (LinearSVC,
+     { **C_small, **penalty_12,
+       'loss': ['hinge', 'squared_hinge'],
+       })
+]
 
 neighbor_models_n_params = [
 
-    (KMeans,
-     {'algorithm': ['auto', 'full', 'elkan'],
-      'init': ['k-means++', 'random']}),
+    # (KMeans,
+    #  {'algorithm': ['auto', 'full', 'elkan'],
+    #   'init': ['k-means++', 'random']}),
+    #
+    # (KNeighborsClassifier,
+    #  {**n_neighbors, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
+    #   'weights': ['uniform', 'distance'],
+    #   'p': [1, 2]
+    #   }),
+    #
+    # (NearestCentroid,
+    #  {**neighbor_metric,
+    #   'shrink_threshold': [1e-3, 1e-2, 0.1, 0.5, 0.9, 2]
+    #   }),
 
-    (KNeighborsClassifier,
-     {**n_neighbors, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
+    (RadiusNeighborsClassifier,
+     {**neighbor_radius, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
       'weights': ['uniform', 'distance'],
-      'p': [1, 2]
-      }),
-
-    (NearestCentroid,
-     {**neighbor_metric,
-      'shrink_threshold': [1e-3, 1e-2, 0.1, 0.5, 0.9, 2]
+      'p': [1, 2],
+      'outlier_label': [-1]
       })
-
 ]
 
 x, y = gen_classification_data()
-big_loop(svm_models_n_params,
+big_loop(neighbor_models_n_params,
          StandardScaler().fit_transform(x), y, isClassification=True)

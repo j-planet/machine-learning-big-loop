@@ -1,5 +1,6 @@
 import warnings
 warnings.filterwarnings('ignore')
+from multiprocessing import cpu_count
 
 # linear models: http://scikit-learn.org/stable/modules/linear_model.html#stochastic-gradient-descent-sgd
 from sklearn.linear_model import \
@@ -126,6 +127,82 @@ linear_models_n_params = [
       })
 ]
 
+linear_models_n_params_small = [
+    (LinearRegression, normalize),
+
+    (Ridge,
+     {**alpha_small, **normalize
+      }),
+
+    (Lasso,
+     {**alpha_small, **normalize
+      }),
+
+    (ElasticNet,
+     {**alpha, **normalize,
+      'l1_ratio': [0.1, 0.3, 0.5, 0.7, 0.9],
+      }),
+
+    (Lars,
+     {**normalize,
+      'n_nonzero_coefs': [100, 300, 500, np.inf],
+      }),
+
+    (LassoLars,
+     {**normalize, **max_iter_inf, **normalize, **alpha_small
+      }),
+
+    (OrthogonalMatchingPursuit,
+     {'n_nonzero_coefs': [100, 300, 500, np.inf, None],
+      **normalize
+      }),
+
+    (BayesianRidge,
+     { 'n_iter': [100, 300, 1000],
+       'alpha_1': [1e-6, 1e-3],
+       'alpha_2': [1e-6, 1e-3],
+       'lambda_1': [1e-6, 1e-3],
+       'lambda_2': [1e-6, 1e-3],
+       **normalize,
+       }),
+
+    # WARNING: ARDRegression takes a long time to run
+    (ARDRegression,
+     {'n_iter': [100, 300],
+      **normalize,
+      'alpha_1': [1e-6, 1e-3],
+      'alpha_2': [1e-6, 1e-3],
+      'lambda_1': [1e-6, 1e-3],
+      'lambda_2': [1e-6, 1e-3],
+      }),
+
+    (SGDRegressor,
+     {'loss': ['squared_loss', 'huber'],
+      **penalty_12e, **n_iter,
+      'alpha': [1e-6, 1e-5, 1e-2, 'optimal'],
+      'l1_ratio': [0.1, 0.3, 0.5, 0.7, 0.9],
+      }),
+
+    (PassiveAggressiveRegressor,
+     {**C, **n_iter,
+      }),
+
+    (RANSACRegressor,
+     {'min_samples': [0.1, 0.5, 0.9, None],
+      'max_trials': n_iter['n_iter'],
+      'stop_score': [0.8, 1],
+      'loss': ['absolute_loss', 'squared_loss']
+      }),
+
+    (HuberRegressor,
+     { **max_iter, **alpha_small,
+       }),
+
+    (KernelRidge,
+     {**alpha_small, **degree,
+      })
+]
+
 svm_models_n_params_small = [
     (SVR,
      {**kernel, **degree, **shrinking
@@ -149,7 +226,7 @@ svm_models_n_params = [
 
     (NuSVR,
      {**C, **nu, **kernel, **degree, **gamma, **coef0, **shrinking , **tol, **max_iter_inf2
-     }),
+      }),
 
     (LinearSVR,
      {**C, **epsilon, **tol, **max_iter,
@@ -163,7 +240,7 @@ neighbor_models_n_params = [
      {**neighbor_radius, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
       'weights': ['uniform', 'distance'],
       'p': [1, 2],
-     }),
+      }),
 
     (KNeighborsRegressor,
      {**n_neighbors, **neighbor_algo, **neighbor_leaf_size, **neighbor_metric,
@@ -171,7 +248,6 @@ neighbor_models_n_params = [
       'weights': ['uniform', 'distance'],
       })
 ]
-
 
 gaussianprocess_models_n_params = [
     (GaussianProcessRegressor,
@@ -182,10 +258,9 @@ gaussianprocess_models_n_params = [
       })
 ]
 
-
 nn_models_n_params = [
     (MLPRegressor,
-     { 'hidden_layer_sizes': [(16,), (64,), (100,), (32, 32)],
+     { 'hidden_layer_sizes': [(16,), (64,), (100,), (32, 64)],
        'activation': ['identity', 'logistic', 'tanh', 'relu'],
        **alpha, **learning_rate, **tol, **warm_start,
        'batch_size': ['auto', 50],
@@ -195,11 +270,21 @@ nn_models_n_params = [
        })
 ]
 
+nn_models_n_params_small = [
+    (MLPRegressor,
+     { 'hidden_layer_sizes': [(64,), (32, 64)],
+       'activation': ['identity', 'tanh', 'relu'],
+       'max_iter': [1000],
+       'early_stopping': [True],
+       **learning_rate_small
+       })
+]
+
 tree_models_n_params = [
 
     (DecisionTreeRegressor,
      {**max_features, **max_depth, **min_samples_split, **min_samples_leaf, **min_impurity_split,
-         'criterion': ['mse', 'mae']}),
+      'criterion': ['mse', 'mae']}),
 
     (ExtraTreesRegressor,
      {**n_estimators, **max_features, **max_depth, **min_samples_split,
@@ -219,9 +304,44 @@ tree_models_n_params_small = [
       'criterion': ['mse', 'mae']})
 ]
 
+def run_linear_models(x, y, small = True, normalize_x = True):
+    return big_loop(linear_models_n_params_small if small else linear_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=False)
+
+def run_svm_models(x, y, small = True, normalize_x = True):
+    return big_loop(svm_models_n_params_small if small else svm_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=False)
+
+def run_neighbor_models(x, y, normalize_x = True):
+    return big_loop(neighbor_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=False)
+
+def run_gaussian_models(x, y, normalize_x = True):
+    return big_loop(gaussianprocess_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=False)
+
+def run_nn_models(x, y, small = True, normalize_x = True):
+    return big_loop(nn_models_n_params_small if small else nn_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=False)
+
+def run_tree_models(x, y, small = True, normalize_x = True):
+    return big_loop(tree_models_n_params_small if small else tree_models_n_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y, isClassification=False)
+
+def run_all(x, y, small = True, normalize_x = True, n_jobs=cpu_count()-1):
+
+    all_params = (linear_models_n_params_small if small else linear_models_n_params) + \
+                 (nn_models_n_params_small if small else nn_models_n_params) + \
+                 gaussianprocess_models_n_params + neighbor_models_n_params + \
+                 (svm_models_n_params_small if small else svm_models_n_params) + \
+                 (tree_models_n_params_small if small else tree_models_n_params)
+
+    return big_loop(all_params,
+                    StandardScaler().fit_transform(x) if normalize_x else x, y,
+                    isClassification=False, n_jobs=n_jobs)
+
+
 if __name__ == '__main__':
 
     x, y = gen_reg_data(10, 3, 100, 3, sum, 0.3)
-
-    big_loop(tree_models_n_params,
-             StandardScaler().fit_transform(x), y, isClassification=False)
+    run_all(x, y, small=True, normalize_x=True)

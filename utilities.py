@@ -123,7 +123,7 @@ def big_loop(models_n_params, x, y, isClassification,
             clf_search.fit(x, y)
 
             timespent = timeit(clf_Klass, clf_search.best_params_, x, y)
-            print('best score:', clf_search.best_score_, 'time spent: %0.3f seconds' % timespent)
+            print('best score:', clf_search.best_score_, 'time/clf: %0.3f seconds' % timespent)
             print('best params:')
             pprint(clf_search.best_params_)
 
@@ -134,12 +134,13 @@ def big_loop(models_n_params, x, y, isClassification,
             res.append((clf_search.best_estimator_, clf_search.best_score_, timespent))
 
         except Exception as e:
-            print('ERROR:', e)
+            print('ERROR OCCURRED')
+            if verbose: print(e)
             res.append((clf_Klass(), -np.inf, np.inf))
 
 
     print('='*40)
-    print(tabulate([[m.__class__.__name__, '%.3f'%s, '%.3f'%t] for m, s, t in res], headers=['Model', 'Score', 'Time (s)']))
+    print(tabulate([[m.__class__.__name__, '%.3f'%s, '%.3f'%t] for m, s, t in res], headers=['Model', 'Score', 'Time/clf (s)']))
     winner_ind = np.argmax([v[1] for v in res])
     winner = res[winner_ind][0]
     print('='*40)

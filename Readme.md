@@ -1,3 +1,4 @@
+# WHAT IT IS
 Many believe that most of the work of supervised (non-deep) Machine Learning lies in feature engineering, whereas the model-selection process is just running through all the models with a huge for-loop. So one glorious weekend, I decided to write said loop.
 
 # HOW IT WORKS
@@ -25,28 +26,26 @@ Note: skipped GradientTreeBoosting due to sub-par model performance, long run-ti
 * Hyperparameters
   You can modify the search space of hyperparameters in `run_regression.py` and `run_classification.py`.
 
-
 The output looks this:
 
-============================================================
-Model                          accuracy    Time/clf (s)
----------------------------  ----------  --------------
-SGDClassifier                     0.967           0.001
-LogisticRegression                0.94            0.001
-Perceptron                        0.9             0.001
-PassiveAggressiveClassifier       0.967           0.001
-MLPClassifier                     0.827           0.018
-KMeans                            0.58            0.01
-KNeighborsClassifier              0.96            0
-NearestCentroid                   0.933           0
-RadiusNeighborsClassifier         0.927           0
-SVC                               0.96            0
-NuSVC                             0.98            0.001
-LinearSVC                         0.94            0.005
-RandomForestClassifier            0.98            0.015
-DecisionTreeClassifier            0.96            0
-ExtraTreesClassifier              0.993           0.002
-============================================================
+| Model                       |  accuracy     |  Time/clf (s)|
+|---------------------------- |:-------------:|:-------------:|
+|SGDClassifier                |     0.967     |      0.001   |
+|LogisticRegression           |     0.940      |      0.001   |
+|Perceptron                   |     0.900       |      0.001   |
+|PassiveAggressiveClassifier  |     0.967     |      0.001   |
+|MLPClassifier                |     0.827     |      0.018   |
+|KMeans                       |     0.580      |      0.010    |
+|KNeighborsClassifier         |     0.960      |      0.000       |
+|NearestCentroid              |     0.933     |      0.000       |
+|RadiusNeighborsClassifier    |     0.927     |      0.000       |
+|SVC                          |     0.960      |      0.000       |
+|NuSVC                        |     0.980      |      0.001   |
+|LinearSVC                    |     0.940      |      0.005   |
+|RandomForestClassifier       |     0.980      |      0.015   |
+|DecisionTreeClassifier       |     0.960      |      0.000       |
+|ExtraTreesClassifier         |     0.993     |      0.002   |
+
 The winner is: ExtraTreesClassifier with score 0.993
 
 # TO-DO'S

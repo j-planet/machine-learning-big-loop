@@ -332,7 +332,8 @@ def run_all(x, y, small = True, normalize_x = True, n_jobs=cpu_count()-1):
 
     all_params = (linear_models_n_params_small if small else linear_models_n_params) + \
                  (nn_models_n_params_small if small else nn_models_n_params) + \
-                 gaussianprocess_models_n_params + neighbor_models_n_params + \
+                 ([] if small else gaussianprocess_models_n_params) + \
+                 neighbor_models_n_params + \
                  (svm_models_n_params_small if small else svm_models_n_params) + \
                  (tree_models_n_params_small if small else tree_models_n_params)
 
